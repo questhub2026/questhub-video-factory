@@ -21,7 +21,8 @@ exports.handler = async (event) => {
         }
         console.log('✅ ElevenLabs key found');
 
-        const voiceResponse = await fetch('https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fapi.elevenlabs.io%2Fv1%2Ftext-to-speech%2F21m00Tcm4TlvDq8ikWAM&data=05%7C02%7C%7C43eec2e5cf9040787a0d08defb37787c%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C639224412831204833%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=%2BTr1DvNTaq7XAvOq5xhx%2Fd1BSdlMRutzWNF9N56wjwk%3D&reserved=0', {
+        // Use the latest model
+        const voiceResponse = await fetch('https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fapi.elevenlabs.io%2Fv1%2Ftext-to-speech%2F21m00Tcm4TlvDq8ikWAM&data=05%7C02%7C%7Ca2db83b113da43ffde4d08defb408eea%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C639224451863617034%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=qqZ8lNbU%2BFNu%2BW2w%2BeT8rNqkRYlu37L8UnhTgmEeaeg%3D&reserved=0', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ exports.handler = async (event) => {
             },
             body: JSON.stringify({
                 text: script,
-                model_id: 'eleven_v3', // ← FIXED: Use the new model
+                model_id: 'eleven_flash_v2_5', // ✅ FIXED: use the newest fast model
                 voice_settings: {
                     stability: 0.5,
                     similarity_boost: 0.5
@@ -37,12 +38,17 @@ exports.handler = async (event) => {
             })
         });
 
+        // Better error handling
         if (!voiceResponse.ok) {
-            const err = await voiceResponse.text();
-            console.error('❌ ElevenLabs error:', err);
+            const status = voiceResponse.status;
+            const body = await voiceResponse.text();
+            console.error('❌ ElevenLabs error status:', status);
+            console.error('❌ ElevenLabs error body:', body);
             return {
                 statusCode: 500,
-                body: JSON.stringify({ error: `ElevenLabs error: ${err}` })
+                body: JSON.stringify({
+                    error: `ElevenLabs error ${status}: ${body}`
+                })
             };
         }
 
@@ -76,7 +82,7 @@ exports.handler = async (event) => {
         console.log('✅ Fal.ai key found');
 
         console.log('🔹 Sending to Fal.ai (VEED Fabric)...');
-        const falResponse = await fetch('https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Ffal.run%2Ffal-ai%2Fveed%2Ffabric%2Ftalking-head&data=05%7C02%7C%7C43eec2e5cf9040787a0d08defb37787c%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C639224412831242628%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=bsLAXKdxgoORSIzIaMvPCqulmMI%2BNJt0p9ypmY3RJeM%3D&reserved=0', {
+        const falResponse = await fetch('https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Ffal.run%2Ffal-ai%2Fveed%2Ffabric%2Ftalking-head&data=05%7C02%7C%7Ca2db83b113da43ffde4d08defb408eea%7C84df9e7fe9f640afb435aaaaaaaaaaaa%7C1%7C0%7C639224451863661571%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=tZpje5HwBW%2BlT%2Fn3w5r4PDcy4hWukrMg1mXyt%2BLfwxQ%3D&reserved=0', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,11 +97,13 @@ exports.handler = async (event) => {
         });
 
         if (!falResponse.ok) {
-            const err = await falResponse.text();
-            console.error('❌ Fal.ai error:', err);
+            const status = falResponse.status;
+            const body = await falResponse.text();
+            console.error('❌ Fal.ai error status:', status);
+            console.error('❌ Fal.ai error body:', body);
             return {
                 statusCode: 500,
-                body: JSON.stringify({ error: `Fal.ai error: ${err}` })
+                body: JSON.stringify({ error: `Fal.ai error ${status}: ${body}` })
             };
         }
 
