@@ -74,7 +74,7 @@ body: JSON.stringify({
 
 text: script,
 
-model_id: 'eleven_monolingual_v1',
+model_id: 'eleven_v3',
 
 voice_settings: {
 
