@@ -2,7 +2,7 @@
 [build]
 
 functions = "functions"
-
+command = "npm install"
 
 [[redirects]]
 
