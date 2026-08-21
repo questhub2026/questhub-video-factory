@@ -1,7 +1,3 @@
-Generate.js
-Sam F
-​You​
-Generate.js
 
 const fetch = require('node-fetch');
 const FormData = require('form-data');
